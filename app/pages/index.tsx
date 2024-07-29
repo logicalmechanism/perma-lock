@@ -4,12 +4,16 @@ import Notification from '../components/Notification';
 import { useWallet } from '@meshsdk/react';
 import { useState, useEffect, useCallback } from "react";
 import { UTxO } from "@meshsdk/core";
+import { fetchRelatedAssets, testBadAssets } from '../utils/badUnits'; // Adjust the path as needed
+import { log } from "console";
+
 
 const Home: NextPage = () => {
   const { connected, wallet, disconnect } = useWallet();
   const [network, setNetwork] = useState<number | null>(null);
   const [changeAddress, setChangeAddress] = useState<string | null>(null);
   const [notification, setNotification] = useState<string>('');
+  const [badAssets, setBadAssets] = useState<string[]>([]);
 
   const clearNotification = () => setNotification('');
 
@@ -20,9 +24,12 @@ const Home: NextPage = () => {
       const _network: number = await wallet.getNetworkId();
       const _changeAddress: string = await wallet.getChangeAddress();
       const _utxos: UTxO[] = await wallet.getUtxos();
-      console.log(_utxos);
-
-      
+      if (_network === 0) {
+        setBadAssets(testBadAssets)
+      } else {
+        const _assets = await fetchRelatedAssets();
+        setBadAssets(_assets);
+      }
       setChangeAddress(_changeAddress);
       setNetwork(_network);
     }
