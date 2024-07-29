@@ -17,7 +17,6 @@ echo -e "\033[1;34m\nBuilding Contracts\n\033[0m"
 # remove all traces
 # aiken build --trace-level silent --filter-traces user-defined
 
-
 # keep the traces for testing if required
 aiken build --trace-level verbose --filter-traces all
 

@@ -5,12 +5,9 @@ export CARDANO_NODE_SOCKET_PATH=$(cat ../data/path_to_socket.sh)
 cli=$(cat ../data/path_to_cli.sh)
 testnet_magic=$(cat ../data/testnet.magic)
 
-# stake key
-stake_key=$(jq -r '.stakeKey' ../../config.json)
-
 # perma lock contract
-perma_lock_nft_script_path="../../contracts/perma_lock_nft_contract.plutus"
-perma_lock_nft_script_address=$(${cli} address build --payment-script-file ${perma_lock_nft_script_path} --stake-address ${stake_key} --testnet-magic ${testnet_magic})
+perma_lock_script_path="../../contracts/perma_lock_contract.plutus"
+perma_lock_script_address=$(${cli} address build --payment-script-file ${perma_lock_script_path} --testnet-magic ${testnet_magic})
 
 # collat, buyer, reference
 user_path="user-wallet"
@@ -22,10 +19,10 @@ min_utxo_value=$(${cli} transaction calculate-min-required-utxo \
     --babbage-era \
     --protocol-params-file ../tmp/protocol.json \
     --tx-out-inline-datum-file ../data/datum.json \
-    --tx-out="${perma_lock_nft_script_address} + 5000000" | tr -dc '0-9')
+    --tx-out="${perma_lock_script_address} + 5000000" | tr -dc '0-9')
 
-perma_lock_nft_script_address_out="${perma_lock_nft_script_address} + ${min_utxo_value}"
-echo "Script OUTPUT: "${perma_lock_nft_script_address_out}
+perma_lock_script_address_out="${perma_lock_script_address} + ${min_utxo_value}"
+echo "Script OUTPUT: "${perma_lock_script_address_out}
 #
 # exit
 #
@@ -52,7 +49,7 @@ FEE=$(${cli} transaction build \
     --out-file ../tmp/tx.draft \
     --change-address ${user_address} \
     --tx-in ${user_tx_in} \
-    --tx-out="${perma_lock_nft_script_address_out}" \
+    --tx-out="${perma_lock_script_address_out}" \
     --tx-out-inline-datum-file ../data/datum.json  \
     --testnet-magic ${testnet_magic})
 

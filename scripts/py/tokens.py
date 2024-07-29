@@ -59,5 +59,5 @@ if __name__ == "__main__":
     with open("../data/token_string.txt", 'w') as file:
         file.write(create_token_string(list_of_token_struc))
 
-    with open("../data/add-nft-redeemer.json", 'w') as file:
+    with open("../data/add-redeemer.json", 'w') as file:
         json.dump(list_struc(list_of_token_struc), file, indent=2)
