@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 export CARDANO_NODE_SOCKET_PATH=$(cat ../data/path_to_socket.sh)
@@ -9,29 +9,23 @@ testnet_magic=$(cat ../data/testnet.magic)
 stake_key=$(jq -r '.stakeKey' ../../config.json)
 
 # perma lock contract
-perma_lock_ft_script_path="../../contracts/perma_lock_ft_contract.plutus"
-perma_lock_ft_script_address=$(${cli} address build --payment-script-file ${perma_lock_ft_script_path} --stake-address ${stake_key} --testnet-magic ${testnet_magic})
+perma_lock_nft_script_path="../../contracts/perma_lock_nft_contract.plutus"
+perma_lock_nft_script_address=$(${cli} address build --payment-script-file ${perma_lock_nft_script_path} --stake-address ${stake_key} --testnet-magic ${testnet_magic})
 
 # collat, buyer, reference
 user_path="user-wallet"
 user_address=$(cat ../wallets/${user_path}/payment.addr)
 user_pkh=$(${cli} address key-hash --payment-verification-key-file ../wallets/${user_path}/payment.vkey)
 
-# this is the maximum amount of tokens that could possible exist
-locking_pid=$(jq -r '.lockingPid' ../../config.json)
-locking_tkn=$(jq -r '.lockingTkn' ../../config.json)
-max_tkn_amt=$(jq -r '.maxTokenAmt' ../../config.json)
-worst_case_value="${max_tkn_amt} ${locking_pid}.${locking_tkn}"
-
 # calc the min ada required for the worst case value and datum
 min_utxo_value=$(${cli} transaction calculate-min-required-utxo \
     --babbage-era \
     --protocol-params-file ../tmp/protocol.json \
     --tx-out-inline-datum-file ../data/datum.json \
-    --tx-out="${perma_lock_ft_script_address} + 5000000 + ${worst_case_value}" | tr -dc '0-9')
+    --tx-out="${perma_lock_nft_script_address} + 5000000" | tr -dc '0-9')
 
-perma_lock_ft_script_address_out="${perma_lock_ft_script_address} + ${min_utxo_value}"
-echo "Script OUTPUT: "${perma_lock_ft_script_address_out}
+perma_lock_nft_script_address_out="${perma_lock_nft_script_address} + ${min_utxo_value}"
+echo "Script OUTPUT: "${perma_lock_nft_script_address_out}
 #
 # exit
 #
@@ -58,7 +52,7 @@ FEE=$(${cli} transaction build \
     --out-file ../tmp/tx.draft \
     --change-address ${user_address} \
     --tx-in ${user_tx_in} \
-    --tx-out="${perma_lock_ft_script_address_out}" \
+    --tx-out="${perma_lock_nft_script_address_out}" \
     --tx-out-inline-datum-file ../data/datum.json  \
     --testnet-magic ${testnet_magic})
 

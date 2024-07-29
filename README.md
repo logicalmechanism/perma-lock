@@ -1,8 +1,8 @@
 # Perma Lock
 
-The `Perma Lock FT` contract is designed to permanently lock a specific token, which is defined at compile time. It allows users to add tokens but prevents any withdrawals. Once tokens are locked in this contract, they cannot be removed. This reduces the minimum required Lovelace and ensures that this minimum amount of Lovelace required by the UTxO remains constant. The transaction fees associated with this contract are nearly constant as well, primarily because these fees depend more on the number of UTxOs in the transaction than on the computational units.
+*This is a fork of the [perma-lock](https://github.com/DripDropz/perma-lock) contracts by Dripdropz.*
 
-The `Perma Lock NFT` contract is designed to permanently lock various types of tokens. It allows users to add tokens but prevents any withdrawals. Once tokens are locked in this contract, they cannot be removed. This flexibility makes the contract particularly beneficial for non-fungible and arbitrary tokens, as it can accommodate any token in the UTxO. Unlike the `Perma Lock FT`, the minimum required Lovelace in this contract is variable and must be adjusted during transaction creation. Transaction fees tend to increase over time, closely correlating with the number of tokens in the UTxO and the number of UTxOs involved in the transaction.
+The `Perma Lock` contract is designed to permanently lock various types of tokens. It allows users to add tokens but prevents any withdrawals. Once tokens are locked in this contract, they cannot be removed. This flexibility makes the contract particularly beneficial for non-fungible and arbitrary tokens, as it can accommodate any token in the UTxO. The minimum required Lovelace in this contract is variable and must be adjusted during transaction creation. Transaction fees tend to increase over time, closely correlating with the number of tokens in the UTxO and the number of UTxOs involved in the transaction.
 
 ## **Prerequisites**
 
@@ -11,25 +11,14 @@ The `Perma Lock NFT` contract is designed to permanently lock various types of t
 
 ## **Configuration**
 
-Configuring the `Perma Lock FT` contract begins by specifying the required compile information inside `config.json`:
+Configuring the `Perma Lock` contract begins by specifying the required compile information inside `config.json`:
 
 ```json
 {
-  "__comment1__": "The FT compile information",
-  "lockingPid": "d441227553a0f1a965fee7d60a0f724b368dd1bddbc208730fccebcf",
-  "lockingTkn": "546869735f49735f415f566572795f4c6f6e675f537472696e675f5f5f5f5f5f",
-  "maxTokenAmt": 9223372036854775807,
-  "randomString1": "acab",
-  "__comment2__": "The NFT compile information",
-  "randomString2": "cafe",
-  "__comment3__": "Place a static stake key here for testing",
-  "stakeKey": "stake_test1uzl65wzu364hh0wxex94qsf5xkeaq2mnmc7xgnsnsjuqr4qruvxwu"
+  "__comment1__": "The compile information",
+  "randomString": "acab",
 }
 ```
-
-- The maximum allowed integer for `maxTokenAmt` is $2^{63} - 1$.
-
-The `Perma Lock NFT` does not need to be configured.
 
 ## **Setup**
 
@@ -47,7 +36,7 @@ The `Perma Lock NFT` does not need to be configured.
 
 4. Create the script references.
 
-5. Change directory into either the `lock_ft` or `lock_nft`.
+5. Change directory into `lock`.
 
 6. Create the perma locked UTxO required for the contract in use.
 
@@ -63,23 +52,20 @@ The `scripts` directory contains sequential scripts for a smooth execution. They
 - Folders containing scripts for the perma-locked contracts.
 - Depositing tokens into the contracts.
 
-To add tokens to the `Perma Lock FT` contract:
+
+To add tokens to the `Perma Lock` contract:
 
 ```bash
-./02_permaLockFT.sh 123456789
-```
-
-The command above locks 123,456,789 tokens into the contract, as specified in the `config.json`.
-
-To add tokens to the `Perma Lock NFT` contract:
-
-```bash
-./02_permaLockNFT.sh $policy_id $token_name $amount
+./02_permaLock.sh $policy_id $token_name $amount
 ```
 
 The command above locks some amount of tokens into the contract, as specified by the `policy_id` and `token_name`.
 
 > ⚠️ **Caution**: This contract is designed to lock tokens irreversibly. Ensure you understand the implications before using.
+
+## **App**
+
+- TODO
 
 ## **Limits**
 
